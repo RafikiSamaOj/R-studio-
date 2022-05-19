@@ -20,7 +20,7 @@ ui <- fluidPage(
     sidebarPanel(width = 3,
                  varSelectInput(inputId="variable", label = "Select the variable", data_for_selection),
                  
-                 selectInput("AnneeID", "Annee :", Annee_selection, selected = 2020, multiple = FALSE, selectize = TRUE, width = NULL, size = NULL)),
+                 selectInput(inputId = "AnneeID", label="Annee :", Annee_selection, selected = 2020, multiple = FALSE, selectize = TRUE, width = NULL, size = NULL)),
                  
                  
     mainPanel(width = 9,
@@ -48,7 +48,7 @@ server <- function(input, output) {
  
    #C'est a partir d'ici que ça peche // je n'arrive pas a creer les bons dataset avec les valeurs saisie (l'annee, le type de vehicule et age du vehicule)
   dataset <- reactive({
-      accident_dataset  %>% filter(Annee==AnneeID())%>%
+      accident_dataset  %>% filter(Annee==input$AnneeID)%>%
         select(c(!!input$variable,Type_accident))  %>%
         group_by(Type_accident) %>%
         summarize(sum_var=sum(!!input$variable))
@@ -58,7 +58,7 @@ server <- function(input, output) {
   #we define a reactive, something that reacts to the user's actions, 
   #that is we create a new dataframe called dataset2 based on the choices of the user
   dataset2 <- reactive({
-    accident_dataset  %>% filter(Annee==selectInput())%>%
+    accident_dataset  %>% filter(Annee==input$AnneeID)%>%
       select(c(!!input$variable,Territoire))  %>%
       group_by(Territoire) %>%
       summarize(sum_var=sum(!!input$variable))
